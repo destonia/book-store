@@ -16,11 +16,11 @@
             </a>
         </div>
         <div class="nav-search col-sm-4" id="nav-search" style="text-align: right">
-            <form class="form-search" action="{{route('books.search')}}" method="post">
+            <form class="form-search" {{--action="{{route('books.search')}}" method="get"--}}>
                 @csrf
 								<span class="input-icon">
-									<input name="search" type="text" placeholder="Search ..." class="nav-search-input"
-                                           id="nav-search-input" autocomplete="off"/>
+									<input name="search" type="text" placeholder="Search ..." class="nav-search-input search"
+                                           id="search" autocomplete="off"/>
 									<i class="ace-icon fa fa-search nav-search-icon"></i>
 								</span>
             </form>
@@ -772,6 +772,28 @@
 
         });
     </script>
+    {{--search book--}}
+    <script type="text/javascript">
+        $('.search').on('keyup',function (){
+            $value = $(this).val();
+            $.ajax({
+                type : 'get',
+                url : '{{route('books.search')}}',
+                data : {
+                    'search' : $value
+                },
+                success : function ($data){
+                    $('tbody').html($data)
+                },
+            });
+        });
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
+    {{--end search book--}}
 
     {{-- delete Book--}}
     <script language="JavaScript" type="text/javascript">
@@ -786,4 +808,5 @@
             });
         });
     </script>
+    {{--end delete book--}}
 @endsection

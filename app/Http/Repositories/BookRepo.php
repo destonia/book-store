@@ -22,6 +22,6 @@ class BookRepo
         $book->delete();
     }
     public function getByName($name){
-        return DB::table('books')->where('name','like','%'.$name.'%')->get();
+        return Book::where('name','like','%'.$name.'%')->get();
     }
 }

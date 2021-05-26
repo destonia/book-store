@@ -44,6 +44,10 @@ class BookService
     {
         return $this->bookRepo->getById($id);
     }
+    public function getByName($name)
+    {
+        return $this->bookRepo->getByName($name);
+    }
 
     public function store($request)
     {

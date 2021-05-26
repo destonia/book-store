@@ -51,7 +51,7 @@ Route::middleware('auth')->prefix('admins')->group(function (){
         Route::post('/delete',[\App\Http\Controllers\backend\BookController::class,'delete'])->name('books.delete');
         Route::post('/store',[\App\Http\Controllers\backend\BookController::class,'store'])->name('books.store');
         Route::post('/update',[\App\Http\Controllers\backend\BookController::class,'update'])->name('books.update');
-        Route::post('/',[\App\Http\Controllers\backend\BookController::class,'search'])->name('books.search');
+        Route::get('/search',[\App\Http\Controllers\backend\BookController::class,'search'])->name('books.search');
         Route::get('/',[\App\Http\Controllers\backend\BookController::class,'index'])->name('books.index');
     });
 });
