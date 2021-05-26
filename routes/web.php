@@ -14,12 +14,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('layouts.admin');
+    return view('backend.login.login');
 });
 
-Route::prefix('admins')->group(function (){
+Route::get('login',[\App\Http\Controllers\backend\LoginController::class,'showLogin'])->name('showLogin');
+Route::post('login',[\App\Http\Controllers\backend\LoginController::class,'login'])->name('login');
+Route::get('logout',[\App\Http\Controllers\backend\LoginController::class,'logout'])->name('logout');
+
+Route::middleware('auth')->prefix('admins')->group(function (){
     Route::get('/',[\App\Http\Controllers\backend\HomeController::class,'index'])->name('admins.index');
-    Route::get('login',[\App\Http\Controllers\backend\HomeController::class,'index'])->name('admins.index');
+
 
     Route::prefix('/authors')->group(function (){
         Route::get('/create',[\App\Http\Controllers\backend\AuthorController::class,'create'])->name('authors.create');

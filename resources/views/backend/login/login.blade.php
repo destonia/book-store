@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta charset="utf-8" />
-    <title>Login Page - Ace Admin</title>
+    <title>Login</title>
 
     <meta name="description" content="User login page" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
@@ -35,7 +35,7 @@
     <![endif]-->
 </head>
 
-<body class="login-layout">
+<body class="login-layout blur-login">
 <div class="main-container">
     <div class="main-content">
         <div class="row">
@@ -44,10 +44,10 @@
                     <div class="center">
                         <h1>
                             <i class="ace-icon fa fa-leaf green"></i>
-                            <span class="red">Ace</span>
-                            <span class="white" id="id-text2">Application</span>
+                            <span class="red">Book</span>
+                            <span class="white" id="id-text2">Store</span>
                         </h1>
-                        <h4 class="blue" id="id-company-text">&copy; Company Name</h4>
+                        <h4 class="blue" id="id-company-text">Welcome</h4>
                     </div>
 
                     <div class="space-6"></div>
@@ -63,31 +63,52 @@
 
                                     <div class="space-6"></div>
 
-                                    <form>
+                                    <form method="post" action="{{route('login')}}">
+                                        @csrf
                                         <fieldset>
                                             <label class="block clearfix">
+                                                @if(!$errors->has('email'))
 														<span class="block input-icon input-icon-right">
-															<input type="text" class="form-control" placeholder="Username" />
+															<input type="email" class="form-control" name="email" placeholder="Email" value="{{old('email')}}" required/>
 															<i class="ace-icon fa fa-user"></i>
 														</span>
+                                                @else
+                                                    <span class="block input-icon input-icon-right">
+															<input style="border: solid red;" type="email" class="form-control" name="email" placeholder="Email" value="{{old('email')}}" required />
+															<i class="ace-icon fa fa-user"></i>
+														</span>
+                                                    @foreach($errors->get('email') as $error)
+                                                        <p>{{$error}}</p>
+                                                    @endforeach
+                                                    @endif
                                             </label>
 
                                             <label class="block clearfix">
+                                                @if(!$errors->has('password'))
 														<span class="block input-icon input-icon-right">
-															<input type="password" class="form-control" placeholder="Password" />
+															<input type="password" class="form-control" name="password" placeholder="Password" required />
 															<i class="ace-icon fa fa-lock"></i>
 														</span>
+                                                @else
+                                                    <span class="block input-icon input-icon-right">
+															<input style="border: solid red;" type="password" class="form-control" name="password" placeholder="Password" required />
+															<i class="ace-icon fa fa-lock"></i>
+														</span>
+                                                    @foreach($errors->get('password') as $error)
+                                                        <p style="color:red;">{{$error}}</p>
+                                                    @endforeach
+                                                @endif
                                             </label>
 
                                             <div class="space"></div>
 
                                             <div class="clearfix">
-                                                <label class="inline">
+                                                {{--<label class="inline">
                                                     <input type="checkbox" class="ace" />
                                                     <span class="lbl"> Remember Me</span>
-                                                </label>
+                                                </label>--}}
 
-                                                <button type="button" class="width-35 pull-right btn btn-sm btn-primary">
+                                                <button type="submit" class="width-35 pull-right btn btn-sm btn-primary">
                                                     <i class="ace-icon fa fa-key"></i>
                                                     <span class="bigger-110">Login</span>
                                                 </button>
@@ -97,7 +118,7 @@
                                         </fieldset>
                                     </form>
 
-                                    <div class="social-or-login center">
+                                    {{--<div class="social-or-login center">
                                         <span class="bigger-110">Or Login Using</span>
                                     </div>
 
@@ -115,11 +136,11 @@
                                         <a class="btn btn-danger">
                                             <i class="ace-icon fa fa-google-plus"></i>
                                         </a>
-                                    </div>
+                                    </div>--}}
                                 </div><!-- /.widget-main -->
 
                                 <div class="toolbar clearfix">
-                                    <div>
+                                    {{--<div>
                                         <a href="#" data-target="#forgot-box" class="forgot-password-link">
                                             <i class="ace-icon fa fa-arrow-left"></i>
                                             I forgot my password
@@ -131,7 +152,7 @@
                                             I want to register
                                             <i class="ace-icon fa fa-arrow-right"></i>
                                         </a>
-                                    </div>
+                                    </div>--}}
                                 </div>
                             </div><!-- /.widget-body -->
                         </div><!-- /.login-box -->

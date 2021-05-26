@@ -332,13 +332,13 @@
                         </li>
                     </ul>
                 </li>
-
+@foreach(session()->get('user') as $user)
                 <li class="light-blue dropdown-modal">
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
                         <img class="nav-user-photo" src="{{asset('assets/images/avatars/user.jpg')}}" alt="Jason's Photo"/>
                         <span class="user-info">
 									<small>Welcome,</small>
-									Jason
+									{{$user['email']}}
 								</span>
 
                         <i class="ace-icon fa fa-caret-down"></i>
@@ -362,13 +362,14 @@
                         <li class="divider"></li>
 
                         <li>
-                            <a href="#">
+                            <a href="{{route('logout')}}">
                                 <i class="ace-icon fa fa-power-off"></i>
                                 Logout
                             </a>
                         </li>
                     </ul>
                 </li>
+                @endforeach
             </ul>
         </div>
     </div><!-- /.navbar-container -->
