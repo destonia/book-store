@@ -18,7 +18,7 @@ class CreateAuthorsTable extends Migration
             $table->string('name');
             $table->date('born');
             $table->date('die')->nullable();
-            $table->integer('book_qty')->default(0);
+            $table->integer('total_book')->default(0);
             $table->string('country');
             $table->string('wiki_link')->nullable();
             $table->string('avatar')->nullable();

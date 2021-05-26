@@ -9,75 +9,294 @@
     <link rel="stylesheet" href="{{asset('assets/css/bootstrap-colorpicker.min.css')}}"/>
 @endsection
 @section('content')
-    <div class="col-sm-9" style="margin-left: 20%">
-
-        <div class="col-sm-9 text-center">
+    <div class="col-sm-12">
+        <div class="col-sm-12 text-center">
 
             <div class="widget-box">
                 <div class="widget-header">
-                    <h4 class="widget-title">Add new Author</h4>
+                    <h4 class="widget-title">Add new Book</h4>
                 </div>
 
                 <div class="widget-body">
                     <div class="widget-main no-padding">
-                        <form method="post" action="{{route('authors.update')}}" enctype="multipart/form-data">
-                            @csrf
-                            @if($errors->any)
-                                @foreach($errors->all() as $error)
-                                    <p>{{$error}}</p>
-                            @endforeach
-                        @endif
+                        <form method="post" action="{{route('books.update')}}" enctype="multipart/form-data">
+                        @csrf
                         <!-- <legend>Form</legend> -->
                             <fieldset>
                                 <div class="row">
-                                    <div class="col-sm-6">
-                                        <div>
-                                            <input type="hidden" value="{{$author->id}}" name="id">
-                                            <label style="width: 100px; text-align: left">Name</label>
-                                            <span class="input-icon">
-												<input type="text" id="form-field-icon-1" name="name" value="{{$author->name}}"/>
-												<i class="ace-icon glyphicon glyphicon-user"></i>
+                                    <div class="col-sm-8">
+                                        <div class="col-sm-6">
+                                            <input type="hidden" value="{{$book->id}}" name="id">
+                                            <div>
+                                                <label style="width: 120px; text-align: left">Name *</label>
+                                                @if($errors->has('name'))
+                                                    <span>
+												<input style="border: solid red" type="text" id="form-field-icon-1"
+                                                       name="name"/>
 											</span>
-                                            <div class="space-12"></div>
-
-                                            <label style="width: 100px;text-align: left">Country</label>
-                                            <span class="input-icon">
-												<input type="text" id="form-field-icon-1" name="country" value="{{$author->country}}"/>
-												<i class="ace-icon glyphicon glyphicon-flag"></i>
+                                                    @foreach($errors->get('name') as $error)
+                                                        <p style="color: red; text-align: right;padding-right: 30px">{{$error}}</p>
+                                                    @endforeach
+                                                @else
+                                                    <span>
+												<input type="text" id="form-field-icon-1" name="name"
+                                                       value="{{$book->name}}"/>
 											</span>
-                                            <div class="space-12"></div>
+                                                @endif
+                                                <div class="space-8"></div>
 
-                                            <label style="width: 100px;text-align: left">Wikipedia</label>
-                                            <span class="input-icon">
-												<input type="text" id="form-field-icon-1" name="wiki_link"value="{{$author->wiki_link}}" />
-												<i class="ace-icon glyphicon glyphicon-link"></i>
-											</span>
-                                            <div class="space-12"></div>
-
-                                            <label style="width: 100px;text-align: left">Born</label>
-                                            <span class="input-icon">
-                                                        <input name="born" class="form-control date-picker"
-                                                               id="id-date-picker-1"
-                                                               type="text" value="{{$author->born}}" data-date-format="yyyy-mm-dd"/>
-                                                <i class="ace-icon glyphicon glyphicon-heart"></i>
+                                                <label
+                                                    style="width: 120px;text-align: left">Category*</label>
+                                                @if($errors->has('category_id'))
+                                                    <span>
+                                            <select style="width: 187px" name="category_id[]" multiple="multiple"
+                                                    class="chosen-select"
+                                                    id="form-field-select-4" data-placeholder=" ">
+                                                            @foreach($book->categories as $category)
+                                                    <option
+                                                        value="{{$category->id}}">{{$category->name}}</option>
+                                                @endforeach
+                                                        </select>
+                                                        </span>
+                                                    @foreach($errors->get('category_id') as $error)
+                                                        <p style="color: red; text-align: right;padding-right: 30px">{{$error}}</p>
+                                                    @endforeach
+                                                @else
+                                                    <span>
+                                            <select style="width: 187px" name="category_id[]" multiple="multiple"
+                                                    class="chosen-select"
+                                                    id="form-field-select-4" data-placeholder=" ">
+                                                @foreach($categories as $category)
+                                                    <option
+                                                        value="{{$category->id}}">{{$category->name}}</option>
+                                                @endforeach
+                                                    @foreach($book->categories as $category)
+                                                        <option selected
+                                                                value="{{$category->id}}">{{$category->name}}</option>
+                                                    @endforeach
+                                            </select>
                                             </span>
-                                            <div class="space-12"></div>
+                                                @endif
+                                                <div class="space-8"></div>
 
-                                            <label style="width: 100px;text-align: left">Die</label>
-                                            <span class="input-icon">
-                                                        <input name="die" class="form-control date-picker"
-                                                               id="id-date-picker-1"
-                                                               type="text" value="{{$author->die}}" data-date-format="yyyy-mm-dd"/>
-                                                <i class="ace-icon glyphicon glyphicon-calendar"></i>
+                                                <label style="width: 120px;text-align: left">Published Date *</label>
+                                                @if(!$errors->has('publish_date'))
+                                                    <span class="input-large">
+                                                    <input name="publish_date" class="date-picker"
+                                                           id="id-date-picker-1"
+                                                           type="text" data-date-format="yyyy-mm-dd"
+                                                    value="{{$book->publish_date}}"/>
+                                                </span>
+                                                @else
+                                                    <span class="input-large">
+                                                    <input style="border: solid red" name="publish_date"
+                                                           class="date-picker"
+                                                           id="id-date-picker-1"
+                                                           type="text" data-date-format="yyyy-mm-dd"/>
+                                                </span>
+                                                    @foreach($errors->get('publish_date') as $error)
+                                                        <p style="color: red; text-align: right;padding-right: 30px">{{$error}}</p>
+                                                    @endforeach
+                                                @endif
+                                                <div class="space-8"></div>
+
+                                                <label style="width: 120px;text-align: left">License No *</label>
+                                                @if(!$errors->has('license_no'))
+                                                    <span>
+												<input type="text" id="form-field-icon-1" name="license_no" value="{{$book->license_no}}"/>
+											</span>
+                                                @else
+                                                    <span>
+												<input style="border: solid red" type="text" id="form-field-icon-1"
+                                                       name="license_no"/>
+											</span>
+                                                    @foreach($errors->get('license_no') as $error)
+                                                        <p style="color: red; text-align: right;padding-right: 30px">{{$error}}</p>
+                                                    @endforeach
+                                                @endif
+                                                <div class="space-8"></div>
+
+                                                <label style="width: 120px;text-align: left">Language *</label>
+                                                @if(!$errors->has('lang'))
+                                                    <span>
+												<input type="text" id="form-field-icon-1" name="lang" value="{{$book->lang}}"/>
+											</span>
+                                                @else
+                                                    <span>
+												<input style="border: solid red" type="text" id="form-field-icon-1"
+                                                       name="lang"/>
+											</span>
+                                                    @foreach($errors->get('lang') as $error)
+                                                        <p style="color: red; text-align: right;padding-right: 30px">{{$error}}</p>
+                                                    @endforeach
+                                                @endif
+                                                <div class="space-8"></div>
+
+                                                <label style="width: 120px;text-align: left">Price *</label>
+                                                @if(!$errors->has('price'))
+                                                    <span>
+												<input type="text" id="form-field-icon-1" name="price" value="{{$book->price}}"/>
+											</span>
+                                                @else
+                                                    <span>
+												<input style="border: solid red" type="text" id="form-field-icon-1"
+                                                       name="price"/>
+											</span>
+                                                    @foreach($errors->get('price') as $error)
+                                                        <p style="color: red; text-align: right;padding-right: 30px">{{$error}}</p>
+                                                    @endforeach
+                                                @endif
+                                                <div class="space-8"></div>
+
+                                                <label style="width: 120px;text-align: left">Description *</label>
+                                                @if(!$errors->has('desc'))
+                                                    <span class="input-large">
+												<input type="text" id="form-field-icon-1" name="desc" value="{{$book->desc}}"/>
+											</span>
+                                                @else
+                                                    <span class="input-large">
+												<input style="border: solid red" type="text" id="form-field-icon-1"
+                                                       name="desc" />
+											</span>
+                                                    @foreach($errors->get('desc') as $error)
+                                                        <p style="color: red; text-align: right;padding-right: 30px">{{$error}}</p>
+                                                    @endforeach
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div>
+                                                <label style="width: 120px;text-align: left">Publisher *</label>
+                                                @if(!$errors->has('publisher'))
+                                                    <span>
+												<input type="text" id="form-field-icon-1" name="publisher" value="{{$book->publisher}}"/>
+											</span>
+                                                @else
+                                                    <span>
+												<input style="border: solid red" type="text" id="form-field-icon-1"
+                                                       name="publisher"/>
+											</span>
+                                                    @foreach($errors->get('publisher') as $error)
+                                                        <p style="color: red; text-align: right;padding-right: 30px">{{$error}}</p>
+                                                    @endforeach
+                                                @endif
+                                                <div class="space-8"></div>
+
+                                                <label style="width: 120px; text-align: left">Author *</label>
+                                                <span>
+                                            <select style="width: 187px" name="author_id[]" multiple="multiple"
+                                                    class="chosen-select"
+                                                    id="form-field-select-4" data-placeholder=" ">
+                                                 @foreach($book->authors as $author)
+                                                    <option selected
+                                                            value="{{$author->id}}">{{$author->name}}</option>
+                                                @endforeach
+                                            </select>
                                             </span>
+                                                @if($errors->has('author_id'))
+                                                    @foreach($errors->get('author_id') as $error)
+                                                        <p style="color: red; text-align: right;padding-right: 30px">{{$error}}</p>
+                                                    @endforeach
+                                                @endif
+                                                <div class="space-8"></div>
 
+                                                <label style="width: 120px;text-align: left">Republish No *</label>
+                                                @if(!$errors->has('republish_no'))
+                                                    <span>
+												<input type="text" id="form-field-icon-1" name="republish_no" value="{{$book->republish_no}}"/>
+											</span>
+                                                @else
+                                                    <span>
+												<input style="border: solid red" type="text" id="form-field-icon-1"
+                                                       name="republish_no"/>
+											</span>
+                                                    @foreach($errors->get('republish_no') as $error)
+                                                        <p style="color: red; text-align: right;padding-right: 30px">{{$error}}</p>
+                                                    @endforeach
+                                                @endif
+                                                <div class="space-8"></div>
+
+                                                <label style="width: 120px;text-align: left">ISBN No *</label>
+                                                @if(!$errors->has('isbn_no'))
+                                                    <span>
+												<input type="text" id="form-field-icon-1" name="isbn_no" value="{{$book->isbn_no}}"/>
+											</span>
+                                                @else
+                                                    <span>
+												<input style="border: solid red" type="text" id="form-field-icon-1"
+                                                       name="isbn_no"/>
+											</span>
+                                                    @foreach($errors->get('isbn_no') as $error)
+                                                        <p style="color: red; text-align: right;padding-right: 30px">{{$error}}</p>
+                                                    @endforeach
+                                                @endif
+                                                <div class="space-8"></div>
+
+                                                <label style="width: 120px;text-align: left">Quantity *</label>
+                                                @if(!$errors->has('qty'))
+                                                    <span>
+												<input type="text" id="form-field-icon-1" name="qty" value="{{$book->qty}}"/>
+											</span>
+                                                @else
+                                                    <span>
+												<input style="border: solid red" type="text" id="form-field-icon-1"
+                                                       name="qty"/>
+											</span>
+                                                    @foreach($errors->get('qty') as $error)
+                                                        <p style="color: red; text-align: right;padding-right: 30px">{{$error}}</p>
+                                                    @endforeach
+                                                @endif
+                                                <div class="space-8"></div>
+
+                                                <label style="width: 120px;text-align: left">Total pages</label>
+                                                @if(!$errors->has('pages'))
+                                                    <span>
+												<input type="text" id="form-field-icon-1" name="pages" value="{{$book->pages}}">
+											</span>
+                                                @else
+                                                    <span>
+												<input style="border: solid red" type="text" id="form-field-icon-1"
+                                                       name="pages">
+											</span>
+                                                    @foreach($errors->get('pages') as $error)
+                                                        <p style="color: red; text-align: right;padding-right: 30px">{{$error}}</p>
+                                                    @endforeach
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 space-12"></div>
+                                        <div class="widget-body col-sm-12" style="text-align: center">
+                                            <div class="widget-main no-padding">
+                                                <div class="form-inline">
+                                                    <div class="col-sm-6">
+                                                        <label class="inline" style="text-align: center">
+                                                            <p>Recommend</p>
+                                                            <input name="recommend" class="ace ace-switch ace-switch-5"
+                                                                   type="checkbox" @if($book->recommend == 1) checked @endif/>
+                                                            <span class="lbl"></span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <label class="inline" style="text-align: center">
+                                                            <p>Hot</p>
+                                                            <input name="hot" class="ace ace-switch ace-switch-5"
+                                                                   type="checkbox" @if($book->hot == 1) checked @endif/>
+                                                            <span class="lbl"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="space-12 col-sm-12"></div>
+                                                <label style="width: 120px;text-align: left">Detail</label>
+                                                <textarea id="form-field-icon-1" name="detail">{{$book->detail}}</textarea>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
+
+                                    <div class="col-sm-4">
                                         <div class="form-group">
-                                            <img id="avatar" src="{{asset('storage/'.$author->avatar)}}"
+                                            <img id="avatar" src="{{asset('storage/'.$book->avatar)}}"
                                                  alt="your image"
-                                                 width="180" height="220"/>
+                                                 width="250" height="380"/>
                                         </div>
                                         <div class="row">
                                             <div class="col-sm-2">
@@ -85,8 +304,7 @@
                                             <div class="form-group col-sm-8 align-left">
                                                 <input name="avatar" type="file" id="id-input-file-2"
                                                        style="text-align: left"
-                                                       onchange="document.getElementById('avatar').src = window.URL.createObjectURL(this.files[0])"
-                                                value="{{$author->avatar}}"/>
+                                                       onchange="document.getElementById('avatar').src = window.URL.createObjectURL(this.files[0])"/>
                                             </div>
                                         </div>
 
@@ -109,6 +327,9 @@
 
     </div>
     </div>
+    <script>
+        CKEDITOR.replace('detail');
+    </script>
 @endsection
 @section('script')
     <script src="{{asset('assets/js/jquery-ui.custom.min.js')}}"></script>

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CreateFormRequest;
+use App\Http\Requests\AuthorRequest;
 use App\Http\Services\CategoryService;
 use Illuminate\Http\Request;
 
@@ -43,7 +43,7 @@ class CategoryController extends Controller
     public function update(Request $request)
     {
         $category = $this->categoryService->getById($request->id);
-        $this->categoryService->update($request);
+        $this->categoryService->update($category);
         toastr()->info('Category: '.'<strong>'.$category->name.'</strong>'.' has been changed to '.'<strong>'.$request->name.'</strong>','Update category');
         return redirect()->route('categories.index');
     }

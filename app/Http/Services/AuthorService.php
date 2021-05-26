@@ -28,8 +28,7 @@ class AuthorService
         $author->avatar = $filePath;
         $this->authorRepo->store($author);
     }
-    public function update($request){
-        $author = $this->authorRepo->getById($request->id);
+    public function update($request, $author){
         $author->fill($request->all());
         if ($request->hasFile('avatar')){
             $filePath = $request->file('avatar')->store('authors','public');

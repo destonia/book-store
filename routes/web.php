@@ -19,6 +19,7 @@ Route::get('/', function () {
 
 Route::prefix('admins')->group(function (){
     Route::get('/',[\App\Http\Controllers\backend\HomeController::class,'index'])->name('admins.index');
+    Route::get('login',[\App\Http\Controllers\backend\HomeController::class,'index'])->name('admins.index');
 
     Route::prefix('/authors')->group(function (){
         Route::get('/create',[\App\Http\Controllers\backend\AuthorController::class,'create'])->name('authors.create');
@@ -43,7 +44,7 @@ Route::prefix('admins')->group(function (){
     Route::prefix('/books')->group(function (){
         Route::get('/create',[\App\Http\Controllers\backend\BookController::class,'create'])->name('books.create');
         Route::get('/edit/{id}',[\App\Http\Controllers\backend\BookController::class,'edit'])->name('books.edit');
-        Route::get('/delete/{id}',[\App\Http\Controllers\backend\BookController::class,'delete'])->name('books.delete');
+        Route::post('/delete',[\App\Http\Controllers\backend\BookController::class,'delete'])->name('books.delete');
         Route::post('/store',[\App\Http\Controllers\backend\BookController::class,'store'])->name('books.store');
         Route::post('/update',[\App\Http\Controllers\backend\BookController::class,'update'])->name('books.update');
         Route::post('/',[\App\Http\Controllers\backend\BookController::class,'search'])->name('books.search');

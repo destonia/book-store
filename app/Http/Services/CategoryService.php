@@ -22,13 +22,7 @@ class CategoryService
         $category->fill($request->all());
         $this->categoryRepo->store($category);
     }
-    public function update($request){
-        $category = $this->categoryRepo->getById($request->id);
-        $category->fill($request->all());
-        if ($request->hasFile('avatar')){
-            $filePath = $request->file('avatar')->store('categories','public');
-            $category->avatar = $filePath;
-        }
+    public function update($category){
         $this->categoryRepo->store($category);
     }
     public function delete($id){

@@ -16,10 +16,7 @@ class CreateBooksTable extends Migration
         Schema::create('books', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedBigInteger('category_id');
-            $table->foreign('category_id')->references('id')->on('categories');
-            $table->unsignedBigInteger('author_id');
-            $table->foreign('author_id')->references('id')->on('authors');
+            $table->string('publisher');
             $table->string('publish_date');
             $table->integer('republish_no');
             $table->string('license_no');
@@ -27,11 +24,14 @@ class CreateBooksTable extends Migration
             $table->string('avatar');
             $table->integer('views')->default(0);
             $table->integer('recommend')->default(0);
+            $table->integer('hot')->default(0);
             $table->integer('sold')->default(0);
             $table->integer('qty');
+            $table->integer('pages');
+            $table->double('price');
             $table->string('lang');
-            $table->string('detail')->nullable();
-            $table->integer('pages')->nullable();
+            $table->string('desc');
+            $table->string('detail',1600)->nullable();
             $table->timestamps();
         });
     }

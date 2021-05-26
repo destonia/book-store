@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CreateFormRequest;
+use App\Http\Requests\AuthorRequest;
 use App\Http\Services\AuthorService;
 use Illuminate\Http\Request;
 
@@ -34,17 +34,17 @@ class AuthorController extends Controller
         return view('backend.author.edit', compact('author'));
     }
 
-    public function store(CreateFormRequest $request)
+    public function store(AuthorRequest $request)
     {
         $this->authorService->store($request);
         toastr()->success('Author: '.$request->name.' has been added','Add Author');
         return redirect()->route('authors.index');
     }
 
-    public function update(CreateFormRequest $request)
+    public function update(AuthorRequest $request)
     {
         $author = $this->authorService->getById($request->id);
-        $this->authorService->update($request);
+        $this->authorService->update($request,$author);
         toastr()->info('Author: '.'<strong>'.$author->name.'</strong>'.' has been changed to '.'<strong>'.$request->name.'</strong>','Update Author');
         return redirect()->route('authors.index');
     }

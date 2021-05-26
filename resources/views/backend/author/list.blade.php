@@ -69,7 +69,7 @@
                 <td class="center"><img src="{{asset('storage/'.$author->avatar)}}" height="50px" id="authorAvatar"></td>
                 <td class="center" style="padding-top: 20px"><a href="{{$author->wiki_link}}" id="authorName">{{$author->name}}</a></td>
                 <td class="center" style="padding-top: 20px">{{$author->born}}</td>
-                <td class="center" style="padding-top: 20px">{{$author->book_qty}}</td>
+                <td class="center" style="padding-top: 20px">{{$author->total_book}}</td>
                 <td class="center" style="padding-top: 20px">{{$author->country}}</td>
                 <td class="center" hidden id="authorId">{{$author->id}}</td>
                 <td class="center" style="padding-top: 20px">

@@ -58,7 +58,7 @@
                     <td class="center" hidden id="categoryId">{{$category->id}}</td>
                     <td class="center" ><a href="#"
                                                                     id="categoryName">{{$category->name}}</a></td>
-                    <td class="center">{{$category->qty}}</td>
+                    <td class="center">{{$category->total_book}}</td>
                     <td class="center" style="padding-top: 5px">
                         <div class="hidden-sm hidden-xs btn-group">
 
