@@ -3,18 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Http\Services\BookService;
+use App\Http\Services\CartService;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
     protected $bookService;
+    protected $cartService;
 
     public function __construct
     (
-        BookService $bookService
+        BookService $bookService,
+        CartService $cartService
     )
     {
         $this->bookService = $bookService;
+        $this->cartService = $cartService;
     }
 
     public function showCart()
@@ -34,47 +38,9 @@ class CartController extends Controller
             'totalPrice' => $book->price,
             'quantity' => 1
         ];
-        $inCartItem = false;
-        if (session()->has('cart')) {
-            $oldItems = session()->get('cart');
-            session()->forget('cart');
-            foreach ($oldItems as $oldItem) {
-                if ($oldItem['id'] == $newItem['id']) {
-                    $oldItem['quantity']++;
-                    $oldItem['totalPrice'] = $newItem['price'] * $oldItem['quantity'];
-                    $inCartItem = true;
-                }
-                session()->push('cart', $oldItem);
-            }
-            if (!$inCartItem) {
-                session()->push('cart', $newItem);
-            }
-        } else {
-            session()->push('cart', $newItem);
-        }
-        $totalItem = count(session()->get('cart'));
-        $summary = 0;
-        foreach (session()->get('cart') as $item) {
-            $summary += $item['totalPrice'];
-        }
-        if (session()->has('summary')) {
-            session()->forget('summary');
-            session()->push('summary', $summary);
-        } else {
-            session()->push('summary', $summary);
-        }
-        $shipCost = 2;
-        foreach (session()->get('cart') as $item) {
-            $summary += $item['totalPrice'];
-        }
-        $total = $summary + $shipCost;
-        $final = ['summary' => $summary, 'total' => $total, 'shipCost' => $shipCost];
-        if (session()->has('summary')) {
-            session()->forget('summary');
-            session()->push('summary', $final);
-        } else {
-            session()->push('summary', $final);
-        }
+        $totalItem = $this->cartService->addItem($newItem);
+        $this->cartService->calculatePrice();
+        $this->cartService->updateSummary(2, '');
         return response()->json(['success' => 'Book: ' . $newItem['name'] . ' added to cart', 'totalItem' => $totalItem]);
     }
 
@@ -83,8 +49,6 @@ class CartController extends Controller
         $inCartItems = session()->get('cart');
         session()->forget('cart');
         $remainItems = [];
-
-        $output = [];
         foreach ($inCartItems as $item) {
             $itemName = $item['name'];
             if ($item['id'] != $request->id) {
@@ -94,27 +58,11 @@ class CartController extends Controller
         foreach ($remainItems as $item) {
             session()->push('cart', $item);
         }
+
         if (session()->has('cart')) {
-            $totalItem = count(session()->get('cart'));
-            $summary = 0;
+            $couponCode = $request->couponCode;
             $shipCost = $request->shipCost;
-            foreach (session()->get('cart') as $item) {
-                $summary += $item['totalPrice'];
-            }
-            $total = $summary + $shipCost;
-            $final = ['summary' => $summary, 'total' => $total, 'shipCost' => $shipCost];
-            if (session()->has('summary')) {
-                session()->forget('summary');
-                session()->push('summary', $final);
-            } else {
-                session()->push('summary', $final);
-            }
-            if (session()->has('status')) {
-                session()->forget('status');
-                session()->push('status', 'Book: ' . $itemName . ' removed from cart');
-            } else {
-                session()->push('status', 'Book: ' . $itemName . ' removed from cart');
-            }
+            $this->cartService->updateSummary($shipCost,$couponCode);
 
         } else {
             session()->forget('summary');
@@ -124,50 +72,19 @@ class CartController extends Controller
 
     public function updateCart(Request $request)
     {
-        $id = $request->id;
-        $inCartItems = session()->get('cart');
-        session()->forget('cart');
-        foreach ($inCartItems as $item) {
-            if ($item['id'] == $id) {
-                $item['quantity'] = $request->qty;
-                $item['totalPrice'] = $item['price'] * $request->qty;
-                $totalPrice = $item['totalPrice'];
-                session()->push('cart', $item);
-            } else {
-                session()->push('cart', $item);
-            }
-        }
-        $summary = 0;
         $shipCost = $request->shipCost;
-        foreach (session()->get('cart') as $item) {
-            $summary += $item['totalPrice'];
-        }
-        $total = $summary + $shipCost;
-        $final = ['summary' => $summary, 'total' => $total, 'shipCost' => $shipCost];
-        if (session()->has('summary')) {
-            session()->forget('summary');
-            session()->push('summary', $final);
+        $couponCode = $request->couponCode;
+        if ($request->id != null) {
+            $id = $request->id;
+            $qty = $request->qty;
+            $totalPrice = $this->cartService->updateCart($id, $qty);
+            $summary = $this->cartService->updateSummary($shipCost, $couponCode);
+            return Response(['totalPrice' => $totalPrice, 'summary' => $summary['summary'], 'total' => $summary['total'], 'discount' => $summary['discount'], 'shipCost' => $shipCost, 'couponCode' => $couponCode]);
+
         } else {
-            session()->push('summary', $final);
+            $summary = $this->cartService->updateSummary($shipCost, $couponCode);
+            return Response(['summary' => $summary['summary'], 'total' => $summary['total'], 'discount' => $summary['discount'], 'shipCost' => $shipCost, 'couponCode' => $couponCode]);
         }
-        return Response(['totalPrice' => $totalPrice, 'summary' => $summary, 'total' => $total]);
     }
 
-    public function updateShipCost(Request $request)
-    {
-        $summary = 0;
-        $shipCost = $request->shipCost;
-        foreach (session()->get('cart') as $item) {
-            $summary += $item['totalPrice'];
-        }
-        $total = $summary + $shipCost;
-        $final = ['summary' => $summary, 'total' => $total, 'shipCost' => $shipCost];
-        if (session()->has('summary')) {
-            session()->forget('summary');
-            session()->push('summary', $final);
-        } else {
-            session()->push('shipCost', $shipCost);
-        }
-        return Response(['summary' => $summary, 'total' => $total]);
-    }
 }

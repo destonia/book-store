@@ -1,3 +1,6 @@
+{{--
+{{dd(session()->get('cart'),session()->get('summary'))}}
+--}}
 @extends('layouts.home')
 @section('title')
     <title>Book Store</title>
@@ -76,14 +79,17 @@
                     </div>
                 </div>
                 <div class="col-lg-4">
+                    @if(session()->has('cart'))
                     <div class="cart-page-inner">
                         <div class="row">
+
                             <div class="col-md-12">
                                 <div class="coupon">
-                                    <input type="text" placeholder="Coupon Code">
-                                    <button>Apply Code</button>
+                                    <input id="couponCode" type="text" placeholder="Coupon Code" value="{{session()->get('summary')[0]['couponCode']}}">
+                                    <button id="couponApply" >Apply Code</button>
                                 </div>
                             </div>
+
                             <div class="col-md-12">
                                 <div class="cart-summary">
                                     <div class="cart-content">
@@ -98,17 +104,32 @@
                                                     <option value="3" @if(session()->get('summary')[0]['shipCost'] == 3) selected @endif> GHTK 3$</option>
                                                 </select>
                                             </span></p>
-                                        <h2>Grand Total<span
-                                                id="total">@if(session()->has('summary'))${{session()->get('summary')[0]['total']}}@endif</span></h2>
+                                        <p>Shipping fee
+                                            <span style="color: red">
+                                                @if(session()->has('summary'))+${{session()->get('summary')[0]['shipCost']}}@endif
+                                            </span>
+                                        </p>
+                                        <p>Discount
+                                            <span id="discount" style="color: green">
+                                                @if(session()->has('summary'))-${{session()->get('summary')[0]['discount']}}@endif
+                                            </span>
+                                        </p>
+                                        <h2>Grand Total
+                                            <span id="total">
+                                                @if(session()->has('summary'))${{session()->get('summary')[0]['total']}}@endif
+                                            </span>
+                                        </h2>
                                     </div>
                                     <div class="cart-btn">
-                                        <button>Update Cart</button>
+                                        <button><a href="{{route('home')}}">Continue Shopping</a></button>
                                         <button>Checkout</button>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -119,98 +140,73 @@
     <script type="text/javascript">
         $('.removeItem').on('click', function () {
             $id = $(this).closest('tr').find('.itemId').text();
-            $shipCost = $('#shipCost').attr('data-value');
+            $shipCost = $('#shipCost').val();
+            $couponCode = $('#couponCode').val();
             $.ajax({
                 type: 'get',
                 url: '{{route('removeItem')}}',
                 data: {
                     'id': $id,
-                    'shipCost': $shipCost
+                    'shipCost': $shipCost,
+                    'couponCode': $couponCode
                 },
                 success: function (res) {
                     window.location.reload();
                 },
             });
         });
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-    </script>
-    <script type="text/javascript">
         $('.updateItem').on('click', function () {
+            let $this = $(this);
+            $couponCode = $('#couponCode').val();
             $qty = $(this).closest('div').find('.itemQty').val();
             $id = $(this).closest('tr').find('.itemId').text();
             $shipCost = $('#shipCost').val();
-            let $this = $(this);
-            $.ajax({
-                type: 'get',
-                url: '{{route('updateCart')}}',
-                data: {
-                    'id': $id,
-                    'qty': $qty,
-                    'shipCost': $shipCost
-                },
-                success: function (res) {
-                    $this.closest('tr').find('.itemTotalPrice').text('$' + res.totalPrice);
-                    $('#summary').text('$' + res.summary);
-                    $('#total').text('$' + res.total);
-                },
-            });
+            updateCart($qty,$id,$shipCost,$this,$couponCode);
         });
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-    </script>
-    <script type="text/javascript">
         $('.itemQty').on('change keyup', function () {
+            let $this = $(this);
+            $couponCode = $('#couponCode').val();
             $qty = $(this).closest('div').find('.itemQty').val();
             $id = $(this).closest('tr').find('.itemId').text();
-            $shipCost = $('#shipCost').attr('data-value');
+            $shipCost = $('#shipCost').val();
+            updateCart($qty, $id, $shipCost, $this,$couponCode);
+        });
+        $('#couponApply').on('click', function () {
+            $couponCode = $('#couponCode').val();
             let $this = $(this);
+            $shipCost = $('#shipCost').val();
+            $qty = null;
+            $id = null;
+            updateCart($qty, $id, $shipCost, $this,$couponCode);
+        });
+        $('#shipCost').on('change', function () {
+            $shipCost = $(this).val();
+            let $this = $(this);
+            $couponCode = $('#couponCode').val();
+            $qty = null;
+            $id = null;
+            updateCart($qty, $id, $shipCost, $this,$couponCode);
+        });
+
+
+        function updateCart($qty,$id,$shipCost,$this,$couponCode){
             $.ajax({
                 type: 'get',
                 url: '{{route('updateCart')}}',
                 data: {
                     'id': $id,
                     'qty': $qty,
-                    'shipCost': $shipCost
+                    'shipCost': $shipCost,
+                    'couponCode':$couponCode
                 },
                 success: function (res) {
                     $this.closest('tr').find('.itemTotalPrice').text('$' + res.totalPrice);
                     $('#summary').text('$' + res.summary);
                     $('#total').text('$' + res.total);
+                    $('#discount').text('-$' + res.discount);
                 },
             });
-        });
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-    </script>
-    <script type="text/javascript">
-        $('#shipCost').on('change', function () {
-            $shipCost = $(this).val();
-            $.ajax({
-                type: 'get',
-                url: '{{route('updateShipCost')}}',
-                data: {
-                    'shipCost': $shipCost,
-                },
-                success: function (res) {
-                    $('#summary').text('$' + res.summary);
-                    $('#total').text('$' + res.total);
-                },
-                error: function(req, textStatus, errorThrown) {
-                    //this is going to happen when you send something different from a 200 OK HTTP
-                    alert('Ooops, something happened: ' + textStatus + ' ' +errorThrown);
-                },
-            });
-        });
+        }
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
