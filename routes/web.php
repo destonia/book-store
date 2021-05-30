@@ -55,3 +55,12 @@ Route::middleware('auth')->prefix('admins')->group(function (){
         Route::get('/',[\App\Http\Controllers\backend\BookController::class,'index'])->name('books.index');
     });
 });
+
+Route::prefix('/book-store')->group(function (){
+    Route::get('/',[\App\Http\Controllers\HomeController::class,'index'])->name('home');
+    Route::get('/add-to-cart',[\App\Http\Controllers\CartController::class,'addToCart'])->name('addToCart');
+    Route::get('/removeItem',[\App\Http\Controllers\CartController::class, 'removeItem'])->name('removeItem');
+    Route::get('/update-cart',[\App\Http\Controllers\CartController::class,'updateCart'])->name('updateCart');
+    Route::get('/update-shipCost',[\App\Http\Controllers\CartController::class,'updateShipCost'])->name('updateShipCost');
+    Route::get('/cart',[\App\Http\Controllers\CartController::class,'showCart'])->name('showCart');
+});

@@ -7,6 +7,7 @@ namespace App\Http\Services;
 use App\Http\Repositories\AuthorRepo;
 use App\Models\Author;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class AuthorService
 {
@@ -38,7 +39,17 @@ class AuthorService
     }
     public function delete($id){
         $author = $this->authorRepo->getById($id);
-        $this->authorRepo->delete($author);
+        $books = $author->books;
+        DB::beginTransaction();
+        try {
+            $author->books()->detach($books);
+            $this->authorRepo->delete($author);
+            DB::commit();
+        }catch (\Exception $exception){
+            DB::rollBack();
+            dd($exception);
+        }
+
     }
     public function search($name){
         return $this->authorRepo->getByName($name);
