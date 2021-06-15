@@ -5,13 +5,13 @@
 @section('title')
     <title>Book Store</title>
 @endsection
-@section('search')
+{{--@section('search')
     <div class="search">
         <input type="text" placeholder="Search">
         <button><i class="fa fa-search"></i></button>
     </div>
 
-@endsection
+@endsection--}}
 @section('content')
     <!-- Breadcrumb Start -->
     <div class="breadcrumb-wrap">
@@ -121,8 +121,8 @@
                                         </h2>
                                     </div>
                                     <div class="cart-btn">
-                                        <button><a href="{{route('home')}}">Continue Shopping</a></button>
-                                        <button>Checkout</button>
+                                        <button><a href="{{route('home')}}" style="color: green">Continue Shopping</a></button>
+                                        <button><a href="{{route('checkout')}}" style="color: yellow">Checkout</a></button>
                                     </div>
                                 </div>
                             </div>

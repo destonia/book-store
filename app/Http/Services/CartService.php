@@ -71,8 +71,9 @@ class CartService
         }
         $summary = 0;
         foreach (session()->get('cart') as $item) {
-            $summary += round($item['totalPrice'],2);
+            $summary += $item['totalPrice'];
         }
+        $summary = round($summary,2,2);
         $total = round(($summary + $shipCost - $discount),2);
         $final = ['summary' => $summary, 'total' => $total, 'shipCost' => $shipCost, 'couponCode' => $couponCode, 'discount' => $discount];
         if (session()->has('summary')) {

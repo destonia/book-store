@@ -18,8 +18,9 @@
         <div class="nav-search col-sm-4" id="nav-search" style="text-align: right">
             <form class="form-search" {{--action="{{route('books.search')}}" method="get"--}}>
                 @csrf
-								<span class="input-icon">
-									<input name="search" type="text" placeholder="Search ..." class="nav-search-input search"
+                <span class="input-icon">
+									<input name="search" type="text" placeholder="Search ..."
+                                           class="nav-search-input search"
                                            id="search" autocomplete="off"/>
 									<i class="ace-icon fa fa-search nav-search-icon"></i>
 								</span>
@@ -74,8 +75,12 @@
                 <i class="ace-icon fa fa-check-circle bigger-110 hidden-480"></i>
                 License No
             </th>
+            <th class="center">
+                <i class="ace-icon fa fa-money bigger-110 hidden-480"></i>
+                Price
+            </th>
 
-            <th></th>
+            <th style="width: 100px;text-align: center" >Action</th>
         </tr>
         </thead>
 
@@ -84,23 +89,26 @@
             <tr>
                 <td class="center" style="padding-top: 20px">{{$key +1}}</td>
                 <td class="center"><img src="{{asset('storage/'.$book->avatar)}}" height="50px" id="bookAvatar"></td>
-                <td class="center" style="padding-top: 20px"><a href="{{$book->wiki_link}}" id="bookName">{{$book->name}}</a></td>
-                <td class="center" style="padding-top: 20px">@foreach($book->categories as $category){{$category->name.', '}}@endforeach</td>
-                <td class="center" style="padding-top: 20px">@foreach($book->authors as $author){{$author->name.', '}}@endforeach</td>
+                <td class="center" style="padding-top: 20px"><a href="{{$book->wiki_link}}"
+                                                                id="bookName">{{$book->name}}</a></td>
+                <td class="center"
+                    style="padding-top: 20px">@foreach($book->categories as $category){{$category->name.', '}}@endforeach</td>
+                <td class="center"
+                    style="padding-top: 20px">@foreach($book->authors as $author){{$author->name.', '}}@endforeach</td>
                 <td class="center" style="padding-top: 20px">{{$book->publish_date}}</td>
-                <td class="center" style="padding-top: 20px" >{{$book->republish_no}}</td>
-                <td class="center" style="padding-top: 20px" >{{$book->isbn_no}}</td>
-                <td class="center" style="padding-top: 20px" >{{$book->publisher}}</td>
-                <td class="center" style="padding-top: 20px" >{{'MSB-'.$book->license_no}}</td>
-                <td class="center" style="padding-top: 20px" hidden id="bookId" data-value="{{$book->id}}">{{'MSB-'.$book->id}}</td>
+                <td class="center" style="padding-top: 20px">{{$book->republish_no}}</td>
+                <td class="center" style="padding-top: 20px">{{$book->isbn_no}}</td>
+                <td class="center" style="padding-top: 20px">{{$book->publisher}}</td>
+                <td class="center" style="padding-top: 20px">{{'MSB-'.$book->license_no}}</td>
+                <td class="center" style="padding-top: 20px">${{$book->price}}</td>
+                <td class="center" style="padding-top: 20px" hidden id="bookId" >{{$book->id}}</td>
                 <td class="center" style="padding-top: 20px">
                     <div class="hidden-sm hidden-xs btn-group">
-
                         <a class="btn btn-xs btn-info" href="{{route('books.edit',$book->id)}}"><i
-                            class="ace-icon fa fa-pencil bigger-120"></i></a>
-                        <a class=" btn btn-xs btn-danger delete-button" href="#delete-modal-form" data-toggle="modal" role="button"><i
+                                class="ace-icon fa fa-pencil bigger-120"></i></a>
+                        <a class=" btn btn-xs btn-danger delete-button" href="#delete-modal-form" data-toggle="modal"
+                           role="button"><i
                                 class="ace-icon btn-danger fa fa-trash bigger-120"></i></a>
-
                     </div>
 
                     <div class="hidden-md hidden-lg">
@@ -116,6 +124,11 @@
 																			<span class="blue">
 																				<i class="ace-icon fa fa-search-plus bigger-120"></i>
 																			</span>
+                                        @if($errors->any())
+                                            @foreach($errors as $error)
+                                            <p>{{$error}}</p>
+                                            @endforeach
+                                        @endif
                                     </a>
                                 </li>
 
@@ -128,7 +141,7 @@
                                 </li>
 
                                 <li>
-                                    <a href="#" class="tooltip-error"  data-rel="tooltip" title="Delete">
+                                    <a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
 																			<span class="red">
 																				<i class="ace-icon fa fa-trash-o bigger-120"></i>
 																			</span>
@@ -142,6 +155,7 @@
         @endforeach
         </tbody>
     </table>
+
 
 
     {{--create modal--}}
@@ -252,17 +266,14 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="blue bigger">Are you sure deleting Book: </h4>
                 </div>
-                <form action="{{route('books.delete')}}" method="post" enctype="multipart/form-data">
+                <form action="{{route('books.softDelete')}}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-xs-12 col-sm-5">
-                                <div class="space"></div>
                                 <img src="" id="delete-avatar" style="width: 180px">
                             </div>
-
                             <div class="col-xs-12 col-sm-7">
-                                <div class="space-4"></div>
                                 <div class="form-group">
                                     <label for="name">Book's Name</label>
                                     <div>
@@ -271,18 +282,18 @@
                                     <div class="row">
                                     </div>
                                 </div>
+                                <p id="reason"></p>
                                 <input hidden id="delete-id" name="id">
                             </div>
                         </div>
-
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-sm" data-dismiss="modal">
+                        <button id="cancel-delete" class="btn btn-sm" data-dismiss="modal">
                             <i class="ace-icon fa fa-times"></i>
                             Cancel
                         </button>
 
-                        <button id="ajaxSubmit" type="submit" class="btn btn-sm btn-primary btn-danger">
+                        <button id="delete-submit" type="submit" class="btn btn-sm btn-primary btn-danger">
                             <i class="ace-icon fa fa-crosshairs"></i>
                             Delete
                         </button>
@@ -774,17 +785,20 @@
     </script>
     {{--search book--}}
     <script type="text/javascript">
-        $('.search').on('keyup',function (){
+        $('.search').on('keyup', function () {
             $value = $(this).val();
             $.ajax({
-                type : 'get',
-                url : '{{route('books.search')}}',
-                data : {
-                    'search' : $value
+                type: 'get',
+                url: '{{route('books.search')}}',
+                data: {
+                    'search': $value
                 },
-                success : function ($data){
+                success: function ($data) {
                     $('tbody').html($data)
                 },
+                error: function (){
+                    alert('typed in character is not valid')
+                }
             });
         });
         $.ajaxSetup({
@@ -799,12 +813,31 @@
     <script language="JavaScript" type="text/javascript">
         $(document).ready(function () {
             $('.delete-button').click(function (e) {
-                let bookName = $(this).closest('tr').find('#bookName').text()
-                let bookId = $(this).closest('tr').find('#bookId').attr('data-value')
+                $bookId = $(this).closest('tr').find('#bookId').text()
+                $.ajax({
+                    type: 'get',
+                    url: '{{route('books.showDeleteForm')}}',
+                    data: {
+                        'id': $bookId
+                    },
+                    success: function ($data) {
+                        if ($data.order_id.length){
+                            $('#reason').html('<p style="color: red"> You can not delete this book because of<a href="' + 'orders/by-book/' + $data.book_id + '"> these orders</a> are not completed</p>')
+                            $('#delete-submit').hide()
+                        }else {
+                            $('#reason').html('<p style="color: red">deleted book will not be stored on database</p')
+                            $('#delete-submit').show()
+                        }
+                        $('#delete-name').text($data.book_name)
+                        $('#delete-id').val($data.book_id)
+                        $('#delete-avatar').attr('src', $data.book_avatar)
+                    }
+                })
+                /*let bookName = $(this).closest('tr').find('#bookName').text()
                 let bookAvatar = $(this).closest('tr').find('#bookAvatar').attr('src')
                 $('#delete-name').text(bookName)
                 $('#delete-id').val(bookId)
-                $('#delete-avatar').attr('src',bookAvatar)
+                $('#delete-avatar').attr('src',bookAvatar)*/
             });
         });
     </script>

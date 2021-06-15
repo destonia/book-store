@@ -49,6 +49,23 @@ class AuthorController extends Controller
         return redirect()->route('authors.index');
     }
 
+    public function softDelete(Request $request)
+    {
+        $id = $request->id;
+        $deleted = $this->authorService->getById($id);
+        $this->authorService->softDelete($id);
+        toastr()->error('Author: '.'<strong>'.$deleted->name.'</strong>'.' has been deleted','Delete Author');
+        return redirect()->route('authors.index');
+    }
+
+    public function showTrashed(){
+        $authors = $this->authorService->getTrashed();
+        return view('backend.author.trashed', compact('authors'));
+    }
+    public function restore(Request $request){
+        $this->authorService->restore($request->id);
+        return redirect()->route('authors.trashed');
+    }
     public function delete(Request $request)
     {
         $id = $request->id;

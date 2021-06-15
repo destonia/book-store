@@ -37,19 +37,27 @@ class AuthorService
         }
         $this->authorRepo->store($author);
     }
-    public function delete($id){
+    public function softDelete($id){
         $author = $this->authorRepo->getById($id);
-        $books = $author->books;
+        $this->authorRepo->softDelete($author);
+    }
+    public function getTrashed(){
+        return $this->authorRepo->getTrashed();
+    }
+    public function restore($id){
+        $this->authorRepo->restore($id);
+    }
+    public function delete($id){
+        $author = $this->authorRepo->getTrashedById($id);
         DB::beginTransaction();
         try {
-            $author->books()->detach($books);
+            $author->books()->detach($author->books);
             $this->authorRepo->delete($author);
             DB::commit();
         }catch (\Exception $exception){
             DB::rollBack();
-            dd($exception);
+            dd($exception,$author->books);
         }
-
     }
     public function search($name){
         return $this->authorRepo->getByName($name);

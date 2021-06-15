@@ -27,27 +27,35 @@ class CategoryService
     public function getById($id){
         return $this->categoryRepo->getById($id);
     }
+    public function getTrashed(){
+        return $this->categoryRepo->getTrashed();
+    }
     public function store($request){
         $category = new Category();
         $category->fill($request->all());
         $this->categoryRepo->store($category);
     }
-    public function update($category){
+    public function update($request){
+        $category = $this->categoryRepo->getById($request->id);
+        toastr()->info('Category: '.'<strong>'.$category->name.'</strong>'.' has been changed to '.'<strong>'.$request->name.'</strong>','Update category');
+        $category->fill(request()->all());
         $this->categoryRepo->store($category);
     }
     public function delete($id){
         $category = $this->categoryRepo->getById($id);
-        $books = $category->books;
         DB::beginTransaction();
         try {
-            $category->books()->detach($books);
             $this->categoryRepo->delete($category);
             DB::commit();
         }catch (\Exception $exception){
             DB::rollBack();
-            dd($exception,$books);
+            dd($exception);
         }
 
+    }
+    public function restore($id){
+        $category = $this->categoryRepo->getTrashedById($id);
+        $this->categoryRepo->restore($category);
     }
     public function search($name){
         return $this->categoryRepo->getByName($name);

@@ -28,6 +28,7 @@ class CreateBooksTable extends Migration
             $table->integer('sold')->default(0);
             $table->integer('qty');
             $table->integer('pages');
+            $table->integer('orders_count');
             $table->double('price');
             $table->string('lang');
             $table->string('desc');

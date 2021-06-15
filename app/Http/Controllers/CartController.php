@@ -4,26 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Http\Services\BookService;
 use App\Http\Services\CartService;
+use App\Http\Services\CategoryService;
+use App\Models\Book;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
     protected $bookService;
     protected $cartService;
+    protected $categoryService;
 
     public function __construct
     (
         BookService $bookService,
-        CartService $cartService
+        CartService $cartService,
+        CategoryService $categoryService
     )
     {
         $this->bookService = $bookService;
         $this->cartService = $cartService;
+        $this->categoryService = $categoryService;
     }
 
     public function showCart()
     {
-        return view('frontend.cart');
+        $categories = $this->categoryService->getAll();
+        return view('frontend.cart',compact('categories'));
     }
 
     public function addToCart(Request $request)
@@ -46,6 +52,8 @@ class CartController extends Controller
 
     public function removeItem(Request $request)
     {
+        /*$id = $request->id;
+        $book = Book::findOrFail($id);*/
         $inCartItems = session()->get('cart');
         session()->forget('cart');
         $remainItems = [];
@@ -63,7 +71,7 @@ class CartController extends Controller
             $couponCode = $request->couponCode;
             $shipCost = $request->shipCost;
             $this->cartService->updateSummary($shipCost,$couponCode);
-
+            toastError('Item'.$request->id.' has been deleted','Delete Item');
         } else {
             session()->forget('summary');
             return Response(['warning' => 'There is nothing in your cart']);

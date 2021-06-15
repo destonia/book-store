@@ -229,7 +229,7 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="blue bigger">Are you sure deleting Author: </h4>
                 </div>
-                <form action="{{route('authors.delete')}}" method="post" enctype="multipart/form-data">
+                <form action="{{route('authors.soft-delete')}}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">

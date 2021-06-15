@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 
 class Author extends Model
 {
-    use HasFactory;
     protected $fillable = [
         'name',
         'avatar',
@@ -20,4 +21,7 @@ class Author extends Model
     public function books(){
         return $this->belongsToMany(Book::class,'book_author','author_id','book_id');
     }
+    use HasFactory;
+    use Notifiable,
+        SoftDeletes;
 }
